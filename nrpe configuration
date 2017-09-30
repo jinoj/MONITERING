@@ -1,0 +1,39 @@
+cd /opt/
+wget http://www.nagios-plugins.org/download/nagios-plugins-2.1.1.tar.gz
+tar -xvzf nagios-plugins-2.1.1.tar.gz
+cd nagios-plugins-2.1.1
+# ./configure
+# make
+# make install
+
+# chown nagios.nagios /usr/local/nagios
+# chown -R nagios.nagios /usr/local/nagios/libexec
+# yum install xinetd
+# wget https://github.com/NagiosEnterprises/nrpe/archive/nrpe-3.0.tar.gz
+# tar -xvzf nrpe-3.0.tar.gz
+#cd nrpe-3.0
+# ./configure
+# make all
+
+# make install-groups-users (if dont create above use it)
+# make install
+# make install-config
+# make install-inetd
+# make install-init
+
+
+service xinetd restart
+systemctl reload xinetd
+systemctl enable nrpe && systemctl start nrpe
+svcadm enable nrpe
+initctl reload-configuration
+
+# netstat -at | egrep "nrpe|5666"
+# /usr/local/nagios/libexec/check_nrpe -H localhost
+# vimacs /usr/local/nagios/etc/nrpe.cfg
+
+/usr/local/nagios/libexec/check_nrpe -H localhost -c check_users
+/usr/local/nagios/libexec/check_nrpe -H localhost -c check_load
+/usr/local/nagios/libexec/check_nrpe -H localhost -c check_hda1
+/usr/local/nagios/libexec/check_nrpe -H localhost -c check_total_procs
+/usr/local/nagios/libexec/check_nrpe -H localhost -c check_zombie_procs
