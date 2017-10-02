@@ -1,0 +1,33 @@
+yum intall monit
+vim /etc/monit.d/httpd.conf
+
+check process httpd with pidfile /var/run/httpd/httpd.pid
+start program  "/usr/bin/systemctl start httpd.service"
+stop program  "/usr/bin/systemctl stop httpdd.service"
+if failed port 80 protocol http then restart
+
+vim /etc/monit.d/mysql.conf
+check process mysql with pidfile /var/run/mariadb/mariadb.pid
+    start program = "/usr/bin/systemctl mariadb start" with timeout 60 seconds
+    stop program  = "/usr/bin/systemctl mariadb stop"
+    if failed unixsocket /var/lib/mysql/mysql.sock then restart
+
+vim /etc/monit.d/firewalld.conf
+
+check process firewalld
+ matching firewalld
+ start program = "/usr/bin/systemctl start firewalld.service "
+ stop program = "/usr/bin/systemctl stop firewalld.service "
+~                                                            
+vim /etc/monit.d/ssh.conf
+check process sshd with pidfile /var/run/sshd.pid
+start program  "/usr/bin/systemctl start sshd.service"
+stop program  "/usr/bin/systemctl stop sshd.service"
+if failed port 22 protocol ssh then restart
+
+vim /etc/monit.d/vsftpd.conf
+check process vsftpd
+ matching vsftpd
+ start program = "/usr/sbin/vsftpd start"
+ stop program = "/usr/sbin/vsftpd stop"
+
