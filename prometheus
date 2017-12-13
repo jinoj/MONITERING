@@ -55,3 +55,38 @@ WantedBy=default.target
  systemctl status node_exporter.service 
  
  browser: --> localhot:9100
+ 
+ yum install https://grafanarel.s3.amazonaws.com/builds/grafana-2.6.0-1.x86_64.rpm
+
+vim /etc/grafana/grafana.ini 
+
+[dashboards.json]
+enabled = true
+path = /var/lib/grafana/dashboards
+
+git clone https://github.com/percona/grafana-dashboards.git
+cp -r grafana-dashboards/dashboards /var/lib/grafana
+=======================important =============================================================================================================================
+sed -i 's/step_input:""/step_input:c.target.step/; s/ HH:MM/ HH:mm/; s/,function(c)/,"templateSrv",function(c,g)/; s/expr:c.target.expr/expr:g.replace(c.target.expr,c.panel.scopedVars)/' /usr/share/grafana/public/app/plugins/datasource/prometheus/query_ctrl.js
+sed -i 's/h=a.interval/h=g.replace(a.interval, c.scopedVars)/' /usr/share/grafana/public/app/plugins/datasource/prometheus/datasource.js
+===============================================================================================================================================================
+vim  /etc/systemd/system/mysqld_exporter.service
+
+[Unit]
+Description=mysqld_exporter
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/opt/mysqld_exporter/mysqld_exporter -config.my-cnf=/opt/mysqld_exporter/.my.cnf
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+ systemctl daemon-reload 
+ systemctl restart mysqld_exporter.service 
+ systemctl status mysqld_exporter.service 
