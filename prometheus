@@ -1,0 +1,57 @@
+mkdir -p /opt/prometheus/
+wget https://github.com/prometheus/prometheus/releases/download/v2.0.0/prometheus-2.0.0.linux-amd64.tar.gz
+tar zxf prometheus-2.0.0.linux-amd64.tar.gz -C /opt/prometheus --strip-components=1
+
+manually start
+==============
+cd /opt/prometheus
+./prometheus
+
+
+vim  /etc/systemd/system/prometheus.service
+
+[Unit]
+Description=prometheus
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/opt/prometheus/prometheus --config.file=/opt/prometheus/prometheus.yml
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+
+
+systemctl daemon-reload
+systemctl restart prometheus
+
+browser: ----->    localhost:9090
+=================================================================================================================
+node_exporter
+=============
+
+ mkdir -p /opt/node_exporter
+ wget https://github.com/prometheus/node_exporter/releases/download/v0.15.2/node_exporter-0.15.2.linux-amd64.tar.gz
+ tar zxf node_exporter-0.15.2.linux-amd64.tar.gz -C /opt/node_exporter --strip-components=1
+ cd /opt/node_exporter/
+ 
+ 
+vim  /etc/systemd/system/node_exporter.service
+  
+[Unit]
+Description=Node Exporter
+
+[Service]
+#User=prometheus
+ExecStart=/opt/node_exporter/node_exporter
+
+[Install]
+WantedBy=default.target
+
+ systemctl daemon-reload 
+ systemctl restart node_exporter.service 
+ systemctl status node_exporter.service 
+ 
+ browser: --> localhot:9100
