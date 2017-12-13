@@ -90,3 +90,5 @@ WantedBy=multi-user.target
  systemctl daemon-reload 
  systemctl restart mysqld_exporter.service 
  systemctl status mysqld_exporter.service 
+ 
+ browser: --> localhot:9104
