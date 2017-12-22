@@ -56,6 +56,28 @@ WantedBy=default.target
  
  browser: --> localhot:9100
  
+ cpu core
+ ========
+ 
+ count(node_cpu{instance=~"$node", mode="system"})
+ 
+ ideal CPU
+ ==========
+ 
+ 100 - (avg by (cpu) (irate(node_cpu{mode="idle", instance=~"$server"}[5m])) * 100)
+ 
+ system load
+ ============
+ node_load1{instance=~"$server"}
+ node_load5{instance=~"$server"}
+ node_load15{instance=~"$server"}
+ 
+ Disk Space  ====> {{mountpoint}}
+ ==========
+ 100.0 - 100 * (node_filesystem_avail{instance=~'$node',device !~'tmpfs',device!~'by-uuid'} / node_filesystem_size{instance=~'$node',device !~'tmpfs',device!~'by-uuid'})
+ 
+ 
+ =================================================================================================
  yum install https://grafanarel.s3.amazonaws.com/builds/grafana-2.6.0-1.x86_64.rpm
 
 vim /etc/grafana/grafana.ini 
