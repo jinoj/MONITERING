@@ -121,6 +121,10 @@ WantedBy=multi-user.target
  systemctl status mysqld_exporter.service 
  
  browser: --> localhot:9104
+ 
+ http://jonathanhui.com/mysql-monitoring-performance
+ 
+ 
 node:
 =====
 node_uname_info
