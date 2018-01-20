@@ -332,3 +332,11 @@ Start mysqld_exporter
 [root@backup ~]# service node_exporter start
 Starting prometheus:                                       [  OK  ]
 [root@backup ~]# 
+
+
+====================================================================================
+
+links:
+======
+
+https://www.webhostingneeds.com/prometheus_init_script_for_centos_6
