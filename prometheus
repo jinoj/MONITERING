@@ -128,3 +128,207 @@ WantedBy=multi-user.target
 node:
 =====
 node_uname_info
+
+=====================================================================================================
+startup script on cent 6
+========================
+
+touch /etc/rc.d/init.d/mysqld_exporter
+chmod 755 /etc/rc.d/init.d/mysqld_exporter
+vim /etc/rc.d/init.d/mysqld_exporter
+
+#!/bin/bash
+#
+# /etc/rc.d/init.d/mysqld_exporter
+#
+# Prometheus monitoring server
+#
+#  chkconfig: 2345 20 80 Read
+#  description: mysqld_exporter monitoring server
+#  processname: mysqld_exporter
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+PROGNAME=mysqld_exporter
+PROG=/opt/mysqld_exporter-0.10.0.linux-amd64/$PROGNAME
+USER=prometheus
+LOGFILE=/var/log/mysqld_exporter.log
+DATADIR=/opt/mysqld_exporter-0.10.0.linux-amd64/mysqld_exporter
+LOCKFILE=/var/run/$PROGNAME.pid
+CONFIG_FILE=/opt/mysqld_exporter-0.10.0.linux-amd64/.my.cnf
+#ALERT_MGR_URL=localhost:9093
+
+start() {
+    echo -n "Starting $PROGNAME: "
+    cd /opt/mysqld_exporter-0.10.0.linux-amd64
+    daemon --user $USER --pidfile="$LOCKFILE" "$PROG -config.my-cnf=$CONFIG_FILE &>$LOGFILE &"
+    #daemon --user $USER --pidfile="$LOCKFILE" "$PROG -config.file $CONFIG_FILE -storage.local.path $DATADIR &>$LOGFILE &"
+    echo $(pidofproc $PROGNAME) >$LOCKFILE
+    echo
+}
+
+stop() {
+    echo -n "Shutting down $PROGNAME: "
+    killproc $PROGNAME
+    rm -f $LOCKFILE
+    echo
+}
+
+
+case "$1" in
+    start)
+    start
+    ;;
+    stop)
+    stop
+    ;;
+    status)
+    status $PROGNAME
+    ;;
+    restart)
+    stop
+    start
+    ;;
+    reload)
+    echo "Sending SIGHUP to $PROGNAME"
+    kill -SIGHUP $(pidofproc $PROGNAME)
+    ;;
+    *)
+        echo "Usage: service mysqld_exporter {start|stop|status|reload|restart}"
+        exit 1
+    ;;
+esac
+
+====================================================================================
+
+Create User For Prometheus
+===========================
+groupadd -r prometheus
+#useradd -r -g prometheus -s /sbin/nologin -d /opt/prometheus/ -c "prometheus Daemons" prometheus
+useradd -r -g prometheus -s /sbin/nologin -d /opt/ -c "prometheus Daemons" prometheus
+#chown -R prometheus:prometheus /opt/prometheus/
+chown -R prometheus:prometheus /opt/
+#touch /var/log/mysqld_exporter.log
+chown prometheus:prometheus /var/log/mysqld_exporter.log
+chmod -R 7 /var/log/mysqld_exporter.log
+
+Run prometheus on Boot
+=======================
+
+chkconfig --add mysqld_exporter
+chkconfig mysqld_exporter on
+
+Verify it is enabled
+
+[root@backup ~]# chkconfig --list | grep mysqld_exporter
+prometheus     	0:off	1:off	2:on	3:on	4:on	5:on	6:off
+[root@backup ~]# 
+
+3:on == will run on boot.
+
+
+Start mysqld_exporter
+
+[root@backup ~]# service mysqld_exporter start
+Starting prometheus:                                       [  OK  ]
+[root@backup ~]# 
+==================================================================================================================
+touch /etc/rc.d/init.d/node_exporter
+chmod 755 /etc/rc.d/init.d/node_exporter
+vim /etc/rc.d/init.d/node_exporter
+#!/bin/bash
+#
+# /etc/rc.d/init.d/node_exporter
+#
+# Prometheus monitoring server
+#
+#  chkconfig: 2345 20 80 Read
+#  description: node_exporter monitoring server
+#  processname: node_exporter
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+PROGNAME=node_exporter
+PROG=/opt/node_exporter-0.15.2.linux-amd64/$PROGNAME
+USER=prometheus
+LOGFILE=/var/log/prometheus.log
+DATADIR=/opt/node_exporter-0.15.2.linux-amd64/node_exporter
+LOCKFILE=/var/run/$PROGNAME.pid
+#CONFIG_FILE=/usr/hostonnet/prometheus/prometheus.yml
+#ALERT_MGR_URL=localhost:9093
+
+start() {
+    echo -n "Starting $PROGNAME: "
+    cd /opt/node_exporter-0.15.2.linux-amd64
+    daemon --user $USER --pidfile="$LOCKFILE" "$PROG &>$LOGFILE &"
+    #daemon --user $USER --pidfile="$LOCKFILE" "$PROG -config.file $CONFIG_FILE -storage.local.path $DATADIR &>$LOGFILE &"
+    echo $(pidofproc $PROGNAME) >$LOCKFILE
+    echo
+}
+
+stop() {
+    echo -n "Shutting down $PROGNAME: "
+    killproc $PROGNAME
+    rm -f $LOCKFILE
+    echo
+}
+
+
+case "$1" in
+    start)
+    start
+    ;;
+    stop)
+    stop
+    ;;
+    status)
+    status $PROGNAME
+    ;;
+    restart)
+    stop
+    start
+    ;;
+    reload)
+    echo "Sending SIGHUP to $PROGNAME"
+    kill -SIGHUP $(pidofproc $PROGNAME)
+    ;;
+    *)
+        echo "Usage: service node_exporter {start|stop|status|reload|restart}"
+        exit 1
+    ;;
+esac
+============================================================================================
+
+Create User For Prometheus
+===========================
+groupadd -r prometheus
+#useradd -r -g prometheus -s /sbin/nologin -d /opt/prometheus/ -c "prometheus Daemons" prometheus
+useradd -r -g prometheus -s /sbin/nologin -d /opt/ -c "prometheus Daemons" prometheus
+#chown -R prometheus:prometheus /opt/prometheus/
+chown -R prometheus:prometheus /opt/
+#touch /var/log/node_exporter.log
+chown prometheus:prometheus /var/log/node_exporter.log
+chmod -R 7 /var/log/node_exporter.log
+
+Run prometheus on Boot
+=======================
+
+chkconfig --add node_exporter
+chkconfig node_exporter on
+
+Verify it is enabled
+
+[root@backup ~]# chkconfig --list | grep mysqld_exporter
+prometheus     	0:off	1:off	2:on	3:on	4:on	5:on	6:off
+[root@backup ~]# 
+
+3:on == will run on boot.
+
+
+Start mysqld_exporter
+
+[root@backup ~]# service node_exporter start
+Starting prometheus:                                       [  OK  ]
+[root@backup ~]# 
