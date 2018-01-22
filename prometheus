@@ -1,3 +1,5 @@
+https://rahulwa.com/post/monitoring-using-prometheus/
+
 mkdir -p /opt/prometheus/
 wget https://github.com/prometheus/prometheus/releases/download/v2.0.0/prometheus-2.0.0.linux-amd64.tar.gz
 tar zxf prometheus-2.0.0.linux-amd64.tar.gz -C /opt/prometheus --strip-components=1
