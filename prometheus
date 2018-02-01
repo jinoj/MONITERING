@@ -9,8 +9,7 @@ manually start
 cd /opt/prometheus
 ./prometheus
 
-
-vim  /etc/systemd/system/prometheus.service
+https://www.axllent.org/docs/view/nodejs-service-with-systemd/#run-nodejs-service-with-systemdvim  /etc/systemd/system/prometheus.service
 
 [Unit]
 Description=prometheus
