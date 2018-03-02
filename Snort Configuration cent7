@@ -1,0 +1,72 @@
+yum install https://www.snort.org/downloads/snort/daq-2.0.6-1.centos7.x86_64.rpm
+
+yum install https://www.snort.org/downloads/snort/snort-2.9.11.1-1.centos7.x86_64.rpm
+
+wget https://www.snort.org/rules/snortrules-snapshot-29111.tar.gz?oinkcode=e8b00e07b9cda04d1939aa626fa2838a56833fa9 -O snortrules-snapshot-29111.tar.gz
+
+tar -xvzf snortrules-snapshot-29111.tar.gz -C /etc/snort/rules
+
+mkdir /usr/local/lib/snort_dynamicrules/
+cp /etc/snort/so_rules/precompiled/Cent-7/x86-64/2.9.6.2/*.so /usr/local/lib/snort_dynamicrules/
+cp /etc/snort/etc/sid-msg.map /etc/snort/
+
+vim /etc/snort/snort.conf
+
+edit
+# decoder and preprocessor event rules
+include $PREPROC_RULE_PATH/preprocessor.rules
+include $PREPROC_RULE_PATH/decoder.rules
+include $PREPROC_RULE_PATH/sensitive-data.rules
+
+ipvar HOME_NET 192.168.5.0/24
+
+var RULE_PATH /etc/snort/rules
+var SO_RULE_PATH /etc/snort/so_rules
+var PREPROC_RULE_PATH /etc/snort/preproc_rules
+
+
+var WHITE_LIST_PATH /etc/snort/rules/iplists        
+var BLACK_LIST_PATH /etc/snort/rules/iplists  
+
+
+sudo mkdir /etc/snort/rules/iplists
+sudo touch /etc/snort/rules/iplists/black_list.rules
+sudo touch /etc/snort/rules/iplists/white_list.rules
+
+to add community rule in snort conf file
+
+wget https://www.snort.org/downloads/community/community-rules.tar.gz
+tar -xvzf community-rules.tar.gz -C /etc/snort/rules
+ls /etc/snort/rules/community-rules/community.rules
+
+vim /etc/snort/snort.conf
+add:
+include $RULE_PATH/community-rules/community.rules
+
+
+
+vim /etc/sysconfig/snort
+
+INTERFACE=ens2 (config depends on intercae)
+
+systemctl restart snord
+systemctl enable snord
+
+chown -R snort:snort /etc/snort
+
+chown -R snort:snort /var/log/snort
+
+
+verify the Configuration
+========================
+
+sudo snort -T -c /etc/snort/snort.conf -i eth0
+If everything is ok, you should see the following output:
+
+ Snort successfully validated the configuration! 
+ Snort exiting
+check it conf:
+==============
+
+snort -A console -q -u snort -g snort -c /etc/snort/snort.conf -i enp3s0
+
