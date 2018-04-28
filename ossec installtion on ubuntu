@@ -1,0 +1,61 @@
+   42  apt-get update
+   43  apt-get install curl apt-transport-https lsb-release
+   44  curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUH | apt-key add -
+   45  echo "deb https://packages.wazuh.com/3.x/apt/ stable main" | tee -a /etc/apt/sources.list.d/wazuh.list
+   46  apt-get update
+   47  apt-get install wazuh-manager
+   48  df -H
+   49  systemctl status wazuh-manager
+   50  curl -sL https://deb.nodesource.com/setup_6.x | bash -
+   51  apt-get install nodejs
+   52  systemctl status wazuh-api
+   53  curl -s https://artifacts.elastic.co/GPG-KEY-elasticsearch | apt-key add -
+   54  echo "deb https://artifacts.elastic.co/packages/6.x/apt stable main" | tee /etc/apt/sources.list.d/elastic-6.x.list
+   55  apt update 
+   56  apt-get install filebeat=6.2.4
+   57  curl -so /etc/filebeat/filebeat.yml https://raw.githubusercontent.com/wazuh/wazuh/3.2/extensions/filebeat/filebeat.yml
+   58  vim /etc/filebeat/filebeat.yml
+   59  systemctl daemon-reload
+   60  systemctl enable filebeat.service
+   61  systemctl start filebeat.service
+   62  echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | tee /etc/apt/sources.list.d/webupd8team-java.list
+   63  echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | tee -a /etc/apt/sources.list.d/webupd8team-java.list
+   64  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886
+   65  add-apt-repository ppa:webupd8team/java
+   66  apt-get update
+   67  curl -s https://artifacts.elastic.co/GPG-KEY-elasticsearch | apt-key add -
+   68  echo "deb https://artifacts.elastic.co/packages/6.x/apt stable main" | tee /etc/apt/sources.list.d/elastic-6.x.list
+   69  apt-get update
+   70  apt-get install elasticsearch=6.2.4
+   71  systemctl daemon-reload
+   72  systemctl enable elasticsearch.service
+   73  curl localhost:9200/?pretty
+   74  netstat -tulpn
+   75  systemctl status elasticsearch.service
+   76  systemctl restart elasticsearch.service
+   77  systemctl status elasticsearch.service
+   78  java -version
+   79  sudo add-apt-repository ppa:webupd8team/java
+   80  sudo apt-get update
+   81  sudo apt-get install oracle-java8-installer
+   82  systemctl restart elasticsearch.service
+   83  systemctl status elasticsearch.service
+   84  curl localhost:9200/?pretty
+   85  curl https://raw.githubusercontent.com/wazuh/wazuh/3.2/extensions/elasticsearch/wazuh-elastic6-template-alerts.json | curl -XPUT 'http://localhost:9200/_template/wazuh' -H 'Content-Type: application/json' -d @-
+   86  apt-get install logstash=1:6.2.4-1
+   87  curl -so /etc/logstash/conf.d/01-wazuh.conf https://raw.githubusercontent.com/wazuh/wazuh/3.2/extensions/logstash/01-wazuh-local.conf
+   88  usermod -a -G ossec logstash
+   89  curl -so /etc/logstash/conf.d/01-wazuh.conf https://raw.githubusercontent.com/wazuh/wazuh/3.2/extensions/logstash/01-wazuh-remote.conf
+   90  systemctl daemon-reload
+   91  systemctl start logstash.service
+   92  apt-get install kibana=6.2.4
+   93  export NODE_OPTIONS="--max-old-space-size=3072"
+   94  /usr/share/kibana/bin/kibana-plugin install https://packages.wazuh.com/wazuhapp/wazuhapp-3.2.1_6.2.4.zip
+   95  vim /etc/kibana/kibana.yml
+   96  systemctl daemon-reload
+   97  systemctl enable kibana.service
+   98  systemctl start kibana.service
+   99  sed -i -r '/deb https:\/\/artifacts.elastic.co\/packages\/6.x\/apt stable main/ s/^(.*)$/#\1/g' /etc/apt/sources.list.d/elastic-6.x.list
+  100  node htpasswd -c user myUserName
+  101  node htpasswd -c user jino
+  102  systemctl restart wazuh-api
