@@ -1,0 +1,7 @@
+#!/bin/bash
+
+status=$(egrep "(Primary\/Secondary|Secondary\/Primary)" /proc/drbd | egrep -o UpToDate/UpToDate | wc -l)
+
+if [ ! $status -eq 2 ] ; then
+mutt -s "DRBD-state wrong - Cluster Node $(hostname)" info@domain.tld </dev/null
+fi
