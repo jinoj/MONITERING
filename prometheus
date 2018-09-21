@@ -369,3 +369,17 @@ Restart=on-failure
 [Install]
 WantedBy=default.target
 
+[Unit]
+Description=Prometheus Monitoring service
+After=network.target auditd.service
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/prometheus-2.4.1.linux-amd64/data
+User=prometheus
+ExecStart=/opt/prometheus-2.4.1.linux-amd64/prometheus --config.file="/opt/prometheus-2.4.1.linux-amd64/prometheus.yml"
+Restart=always
+
+[Install]
+WantedBy=default.target
+
