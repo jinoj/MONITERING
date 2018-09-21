@@ -361,7 +361,7 @@ After=network.target auditd.service
 
 [Service]
 User=prometheus
-ExecStart=/opt/node_exporter-0.16.0.linux-amd64/node_exporter --path.procfs=/proc --collector.runit.servicedir=/etc/service  --collector.tcpstat --collector.textfile.directory=/opt/node_exporter-0.16.0.linux-amd64/textfile_collector/  --collector.bonding   --collector.systemd  --collector.logind --collector.filesystem.ignored-mount-points "^(/snap/|/run/|/dev/|/var/|/sys|/run).*"
+ExecStart=/opt/node_exporter-0.16.0.linux-amd64/node_exporter --path.procfs=/proc --collector.runit.servicedir=/etc/service  --collector.tcpstat --collector.textfile.directory=/opt/node_exporter-0.16.0.linux-amd64/textfile_collector/  --collector.bonding   --collector.systemd  --collector.logind --collector.filesystem.ignored-mount-points "^(/snap/|/run/|/dev/|/var/|/sys|/run).*" --collector.netdev.ignored-devices "^lo.*"
 Restart=on-failure
 #StandardOutput=syslog
 #StandardError=syslog
